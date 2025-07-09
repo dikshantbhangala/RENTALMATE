@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683297566815",
+    "project_id": "rentalmate-22de9",
+    "storage_bucket": "rentalmate-22de9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683297566815:android:5e449f701d166289b82bea",
+        "android_client_info": {
+          "package_name": "com.rentalmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFGQpg5QMoc5_WlCxpWio5Uoc3F2iHFzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
