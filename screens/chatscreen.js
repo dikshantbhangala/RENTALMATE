@@ -1,19 +1,19 @@
-import ChatBubble from '.../components/chatbubbles';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import colors from '../style/colors';
-import fonts from '../style/fonts';
+import ChatBubble from '../components/chatbubble';
+import colors from '../styles/colors';
+import fonts from '../styles/gloabalstyles';
 
 const ChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([]);

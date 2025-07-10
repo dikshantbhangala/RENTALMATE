@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
-import colors from '../style/colors';
-import fonts from '../style/fonts';
+import colors from '../styles/colors';
+import fonts from '../styles/gloabalstyles';
 
 const ChatBubble = ({ 
   message, 

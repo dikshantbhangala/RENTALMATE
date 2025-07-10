@@ -14,6 +14,7 @@ import {
   View
 } from 'react-native';
 import { COLORS, FONTS } from '../styles/colors';
+import HomeScreen from './homescreen';
 
 const LoginScreen = ({ onLoginSuccess }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -170,55 +171,8 @@ const LoginScreen = ({ onLoginSuccess }) => {
   // HOME SCREEN COMPONENT
   if (showHomeScreen) {
     return (
-      <View style={styles.homeContainer}>
-        <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
-        
-        <View style={styles.homeHeader}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <Text style={styles.logoText}>R</Text>
-            </View>
-            <Text style={styles.appName}>RentalMate</Text>
-          </View>
-          
-          <Text style={styles.homeWelcome}>Welcome to RentalMate!</Text>
-          <Text style={styles.homeSubtext}>
-            Logged in as: {formatPhoneNumber(phoneNumber)}
-          </Text>
-        </View>
+     <HomeScreen />
 
-        <View style={styles.homeContent}>
-          <TouchableOpacity style={styles.homeButton} activeOpacity={0.8}>
-            <Text style={styles.homeButtonText}>🏠 Browse Properties</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.homeButton} activeOpacity={0.8}>
-            <Text style={styles.homeButtonText}>📋 List Your Property</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.homeButton} activeOpacity={0.8}>
-            <Text style={styles.homeButtonText}>📅 My Bookings</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.homeButton} activeOpacity={0.8}>
-            <Text style={styles.homeButtonText}>👤 Profile</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.homeButton} activeOpacity={0.8}>
-            <Text style={styles.homeButtonText}>💬 Support</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.homeFooter}>
-          <TouchableOpacity 
-            style={styles.logoutButton}
-            onPress={goBackToLogin}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     );
   }
 

@@ -35,6 +35,7 @@ const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState('home');
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const [activeFilters, setActiveFilters] = useState({
     gender: 'All',
     maxRent: 15000,
@@ -292,26 +293,18 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const navigateToDetails = (property) => {
-    Alert.alert(
-      'Property Details',
-      `Name: ${property.name}\nPrice: ₹${property.price}\nLocation: ${property.location}\nOwner: ${property.owner}\nContact: ${property.contact}`,
-      [
-        { text: 'Close', style: 'cancel' },
-        { text: 'Call Now', onPress: () => console.log('Calling...') },
-        { text: 'Chat', onPress: () => navigateToScreen('chat') }
-      ]
-    );
+    setSelectedProperty(property);
+    setCurrentScreen('details');
   };
 
   const navigateToFeaturedDetails = (property) => {
-    Alert.alert(
-      'Featured Property',
-      `Title: ${property.title}\nPrice: ₹${property.price}\nLocation: ${property.location}\nType: ${property.type}\nRating: ${property.rating}⭐`,
-      [
-        { text: 'Close', style: 'cancel' },
-        { text: 'View Details', onPress: () => console.log('Viewing details...') }
-      ]
-    );
+    setSelectedProperty(property);
+    setCurrentScreen('details');
+  };
+
+  const navigateToChat = (property = null) => {
+    setSelectedProperty(property);
+    setCurrentScreen('chat');
   };
 
   const renderFeaturedItem = ({ item }) => (
@@ -391,7 +384,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={styles.chatButton}
-              onPress={() => navigateToScreen('chat')}
+              onPress={() => navigateToChat(item)}
             >
               <MaterialIcons name="chat" size={18} color="#FFF" />
             </TouchableOpacity>
@@ -407,21 +400,39 @@ const HomeScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigateToScreen('home')}>
           <MaterialIcons name="arrow-back" size={24} color="#FFD700" />
         </TouchableOpacity>
-        <Text style={styles.chatTitle}>Property Chat</Text>
+        <View style={styles.chatHeaderInfo}>
+          <Text style={styles.chatTitle}>
+            {selectedProperty?.name || selectedProperty?.title || 'Property Chat'}
+          </Text>
+          <Text style={styles.chatSubtitle}>
+            {selectedProperty?.owner || 'Property Owner'}
+          </Text>
+        </View>
+        <TouchableOpacity style={styles.chatCallButton}>
+          <MaterialIcons name="call" size={20} color="#4CAF50" />
+        </TouchableOpacity>
       </View>
       
       <ScrollView style={styles.chatMessages}>
         <View style={styles.chatBubble}>
           <Text style={styles.chatText}>Hello! I'm interested in your property.</Text>
+          <Text style={styles.chatTime}>10:30 AM</Text>
         </View>
         <View style={[styles.chatBubble, styles.chatBubbleOwner]}>
-          <Text style={styles.chatText}>Hi! Thank you for your interest. What would you like to know?</Text>
+          <Text style={[styles.chatText, styles.chatTextOwner]}>Hi! Thank you for your interest. What would you like to know?</Text>
+          <Text style={[styles.chatTime, styles.chatTimeOwner]}>10:32 AM</Text>
         </View>
         <View style={styles.chatBubble}>
           <Text style={styles.chatText}>Is the property available for immediate booking?</Text>
+          <Text style={styles.chatTime}>10:35 AM</Text>
         </View>
         <View style={[styles.chatBubble, styles.chatBubbleOwner]}>
-          <Text style={styles.chatText}>Yes, it's available. Would you like to schedule a visit?</Text>
+          <Text style={[styles.chatText, styles.chatTextOwner]}>Yes, it's available. Would you like to schedule a visit?</Text>
+          <Text style={[styles.chatTime, styles.chatTimeOwner]}>10:36 AM</Text>
+        </View>
+        <View style={styles.chatBubble}>
+          <Text style={styles.chatText}>That sounds great! What time works best for you?</Text>
+          <Text style={styles.chatTime}>10:38 AM</Text>
         </View>
       </ScrollView>
       
@@ -430,7 +441,11 @@ const HomeScreen = ({ navigation }) => {
           style={styles.chatTextInput}
           placeholder="Type your message..."
           placeholderTextColor="#888"
+          multiline
         />
+        <TouchableOpacity style={styles.chatAttachButton}>
+          <MaterialIcons name="attach-file" size={20} color="#FFD700" />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.chatSendButton}>
           <MaterialIcons name="send" size={20} color="#FFF" />
         </TouchableOpacity>
@@ -460,15 +475,29 @@ const HomeScreen = ({ navigation }) => {
               {user?.name || 'User'} 👋
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.profileButton}
-            onPress={() => navigateToScreen('profile')}
-          >
-            <Image
-              source={{ uri: user?.profileImage || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100' }}
-              style={styles.profileImage}
-            />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigateToScreen('settings')}
+            >
+              <MaterialIcons name="settings" size={22} color="#FFD700" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigateToScreen('ai-help')}
+            >
+              <MaterialIcons name="smart-toy" size={22} color="#FFD700" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.profileButton}
+              onPress={() => navigateToScreen('profile')}
+            >
+              <Image
+                source={{ uri: user?.profileImage || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100' }}
+                style={styles.profileImage}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Search and Filter */}
@@ -552,12 +581,305 @@ const HomeScreen = ({ navigation }) => {
         )}
       </View>
 
+      {/* Premium Plans Section */}
+      <View style={styles.premiumSection}>
+        <Text style={styles.sectionTitle}>Premium Plans</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.premiumList}>
+          <TouchableOpacity style={styles.premiumCard} activeOpacity={0.9}>
+            <View style={styles.premiumHeader}>
+              <MaterialIcons name="star" size={24} color="#FFD700" />
+              <Text style={styles.premiumTitle}>Basic</Text>
+            </View>
+            <Text style={styles.premiumPrice}>₹99<Text style={styles.premiumPriceUnit}>/month</Text></Text>
+            <View style={styles.premiumFeatures}>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>View 10 properties/day</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Basic filters</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Email support</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.premiumButton}>
+              <Text style={styles.premiumButtonText}>Choose Plan</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.premiumCard, styles.premiumCardPopular]} activeOpacity={0.9}>
+            <View style={styles.popularBadge}>
+              <Text style={styles.popularBadgeText}>POPULAR</Text>
+            </View>
+            <View style={styles.premiumHeader}>
+              <MaterialIcons name="star" size={24} color="#FFD700" />
+              <Text style={styles.premiumTitle}>Pro</Text>
+            </View>
+            <Text style={styles.premiumPrice}>₹199<Text style={styles.premiumPriceUnit}>/month</Text></Text>
+            <View style={styles.premiumFeatures}>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Unlimited properties</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Advanced filters</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Priority support</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>AI recommendations</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={[styles.premiumButton, styles.premiumButtonPopular]}>
+              <Text style={styles.premiumButtonTextPopular}>Choose Plan</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.premiumCard} activeOpacity={0.9}>
+            <View style={styles.premiumHeader}>
+              <MaterialIcons name="star" size={24} color="#FFD700" />
+              <Text style={styles.premiumTitle}>Elite</Text>
+            </View>
+            <Text style={styles.premiumPrice}>₹399<Text style={styles.premiumPriceUnit}>/month</Text></Text>
+            <View style={styles.premiumFeatures}>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Everything in Pro</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Virtual tours</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>24/7 support</Text>
+              </View>
+              <View style={styles.premiumFeature}>
+                <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                <Text style={styles.premiumFeatureText}>Concierge service</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.premiumButton}>
+              <Text style={styles.premiumButtonText}>Choose Plan</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+
       {/* Logout Button */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <MaterialIcons name="logout" size={20} color="#FF4444" />
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </ScrollView>
+  );
+
+  const renderDetailsScreen = () => (
+    <View style={styles.detailsContainer}>
+      <View style={styles.detailsHeader}>
+        <TouchableOpacity onPress={() => navigateToScreen('home')}>
+          <MaterialIcons name="arrow-back" size={24} color="#FFD700" />
+        </TouchableOpacity>
+        <Text style={styles.detailsTitle}>Property Details</Text>
+        <TouchableOpacity style={styles.favoriteButton}>
+          <MaterialIcons name="favorite-border" size={24} color="#FFD700" />
+        </TouchableOpacity>
+      </View>
+      
+      <ScrollView style={styles.detailsContent}>
+        <Image 
+          source={{ uri: selectedProperty?.images?.[0] || selectedProperty?.image }} 
+          style={styles.detailsImage} 
+        />
+        
+        <View style={styles.detailsInfo}>
+          <View style={styles.detailsMainInfo}>
+            <Text style={styles.detailsName}>
+              {selectedProperty?.name || selectedProperty?.title}
+            </Text>
+            <View style={styles.detailsVerified}>
+              <MaterialIcons name="verified" size={20} color="#4CAF50" />
+              <Text style={styles.detailsVerifiedText}>Verified</Text>
+            </View>
+          </View>
+          
+          <Text style={styles.detailsLocation}>
+            <MaterialIcons name="location-on" size={16} color="#FFD700" />
+            {selectedProperty?.location}
+          </Text>
+          
+          <View style={styles.detailsRating}>
+            <MaterialIcons name="star" size={18} color="#FFD700" />
+            <Text style={styles.detailsRatingText}>
+              {selectedProperty?.rating} • Excellent
+            </Text>
+          </View>
+          
+          <Text style={styles.detailsPrice}>
+            ₹{selectedProperty?.price}
+            <Text style={styles.detailsPriceUnit}>/month</Text>
+          </Text>
+          
+          <Text style={styles.detailsDescription}>
+            {selectedProperty?.description || 'This is a premium property with excellent amenities and great location connectivity.'}
+          </Text>
+          
+          {selectedProperty?.amenities && (
+            <View style={styles.detailsAmenities}>
+              <Text style={styles.detailsAmenitiesTitle}>Amenities</Text>
+              <View style={styles.detailsAmenitiesGrid}>
+                {selectedProperty.amenities.map((amenity, index) => (
+                  <View key={index} style={styles.detailsAmenityItem}>
+                    <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
+                    <Text style={styles.detailsAmenityText}>{amenity}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+          
+          <View style={styles.detailsOwner}>
+            <Text style={styles.detailsOwnerTitle}>Contact Owner</Text>
+            <View style={styles.detailsOwnerInfo}>
+              <View style={styles.detailsOwnerAvatar}>
+                <MaterialIcons name="person" size={24} color="#FFD700" />
+              </View>
+              <View style={styles.detailsOwnerDetails}>
+                <Text style={styles.detailsOwnerName}>
+                  {selectedProperty?.owner || 'Property Owner'}
+                </Text>
+                <Text style={styles.detailsOwnerPhone}>
+                  {selectedProperty?.contact || '+91 XXXXX XXXXX'}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+      
+      <View style={styles.detailsActions}>
+        <TouchableOpacity style={styles.detailsCallButton}>
+          <MaterialIcons name="call" size={20} color="#FFF" />
+          <Text style={styles.detailsCallButtonText}>Call</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsChatButton}
+          onPress={() => navigateToChat(selectedProperty)}
+        >
+          <MaterialIcons name="chat" size={20} color="#000" />
+          <Text style={styles.detailsChatButtonText}>Chat</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const renderSettingsScreen = () => (
+    <View style={styles.settingsContainer}>
+      <View style={styles.settingsHeader}>
+        <TouchableOpacity onPress={() => navigateToScreen('home')}>
+          <MaterialIcons name="arrow-back" size={24} color="#FFD700" />
+        </TouchableOpacity>
+        <Text style={styles.settingsTitle}>Settings</Text>
+      </View>
+      
+      <ScrollView style={styles.settingsContent}>
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Account</Text>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="person" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Edit Profile</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="lock" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Change Password</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Preferences</Text>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="notifications" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Notifications</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="language" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Language</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>Support</Text>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="help" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Help Center</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.settingsItem}>
+            <MaterialIcons name="feedback" size={24} color="#FFD700" />
+            <Text style={styles.settingsItemText}>Send Feedback</Text>
+            <MaterialIcons name="chevron-right" size={24} color="#CCC" />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  const renderAIHelpScreen = () => (
+    <View style={styles.aiHelpContainer}>
+      <View style={styles.aiHelpHeader}>
+        <TouchableOpacity onPress={() => navigateToScreen('home')}>
+          <MaterialIcons name="arrow-back" size={24} color="#FFD700" />
+        </TouchableOpacity>
+        <Text style={styles.aiHelpTitle}>AI Assistant</Text>
+      </View>
+      
+      <ScrollView style={styles.aiHelpContent}>
+        <View style={styles.aiWelcome}>
+          <MaterialIcons name="smart-toy" size={60} color="#FFD700" />
+          <Text style={styles.aiWelcomeText}>Hi! I'm your AI assistant</Text>
+          <Text style={styles.aiWelcomeSubtext}>Ask me anything about properties!</Text>
+        </View>
+        
+        <View style={styles.aiSuggestions}>
+          <Text style={styles.aiSuggestionsTitle}>Quick Questions</Text>
+          <TouchableOpacity style={styles.aiSuggestionItem}>
+            <Text style={styles.aiSuggestionText}>Find PG under ₹10,000</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.aiSuggestionItem}>
+            <Text style={styles.aiSuggestionText}>Best areas for students</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.aiSuggestionItem}>
+            <Text style={styles.aiSuggestionText}>Properties with parking</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.aiSuggestionItem}>
+            <Text style={styles.aiSuggestionText}>Tips for PG hunting</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      
+      <View style={styles.aiInput}>
+        <TextInput
+          style={styles.aiTextInput}
+          placeholder="Ask me anything..."
+          placeholderTextColor="#888"
+          multiline
+        />
+        <TouchableOpacity style={styles.aiSendButton}>
+          <MaterialIcons name="send" size={20} color="#FFF" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 
   const renderProfileScreen = () => (
@@ -603,7 +925,10 @@ const HomeScreen = ({ navigation }) => {
       
       {currentScreen === 'home' && renderHomeContent()}
       {currentScreen === 'chat' && renderChatScreen()}
+      {currentScreen === 'details' && renderDetailsScreen()}
       {currentScreen === 'profile' && renderProfileScreen()}
+      {currentScreen === 'settings' && renderSettingsScreen()}
+      {currentScreen === 'ai-help' && renderAIHelpScreen()}
 
       <FilterModal
         visible={filterModalVisible}
@@ -642,6 +967,16 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#FFD700',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: '#1A1A1A',
   },
   profileButton: {
     padding: 2,
@@ -951,7 +1286,94 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  // Chat Screen Styles
+  // Premium Plans Styles
+  premiumSection: {
+    paddingVertical: 20,
+  },
+  premiumList: {
+    paddingLeft: 20,
+  },
+  premiumCard: {
+    width: width * 0.75,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 20,
+    padding: 20,
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: '#333',
+    position: 'relative',
+  },
+  premiumCardPopular: {
+    borderColor: '#FFD700',
+    borderWidth: 2,
+  },
+  popularBadge: {
+    position: 'absolute',
+    top: -10,
+    right: 20,
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  popularBadgeText: {
+    color: '#000',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  premiumHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 15,
+  },
+  premiumTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  premiumPrice: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    marginBottom: 20,
+  },
+  premiumPriceUnit: {
+    fontSize: 16,
+    color: '#CCC',
+  },
+  premiumFeatures: {
+    gap: 12,
+    marginBottom: 25,
+  },
+  premiumFeature: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  premiumFeatureText: {
+    color: '#FFF',
+    fontSize: 14,
+  },
+  premiumButton: {
+    backgroundColor: '#333',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  premiumButtonPopular: {
+    backgroundColor: '#FFD700',
+  },
+  premiumButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  premiumButtonTextPopular: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   chatContainer: {
     flex: 1,
     backgroundColor: '#000',
@@ -1087,3 +1509,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+export default HomeScreen;

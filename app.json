@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "platforms": ["android", "web",  "ios"],
     "scheme": "rentalmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

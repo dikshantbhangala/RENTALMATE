@@ -1,18 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    Image,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  Image,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import colors from '../style/colors';
-import fonts from '../style/fonts';
+import colors from '../styles/colors';
+import fonts from '../styles/gloabalstyles';
 
 const { width, height } = Dimensions.get('window');
 

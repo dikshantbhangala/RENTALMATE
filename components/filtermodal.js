@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
@@ -14,6 +15,7 @@ import {
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+
 
 const FilterModal = ({ visible, onClose, onApplyFilters, currentFilters }) => {
   const [filters, setFilters] = useState({
