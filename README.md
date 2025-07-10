@@ -2,7 +2,7 @@
 
 🚨 **NOTE:** This is a demo representation of a cross-platform (iOS + Android) app currently not published on Play Store or App Store. However, the **live working version is hosted on the web**:
 
-👉 **Live Web Demo**: [https://rentalmate-demo.web.app](https://rentalmate-demo.web.app)
+👉 **Live Web Demo**: [https://rentalmate-demo.web.app]([https://rentalmate-demo.web.app](https://rentalmate-1qr6.vercel.app/))
 
 📱 **Login is done via mobile number** (mocked) and the **OTP is always `123456`** for demonstration purposes.
 
